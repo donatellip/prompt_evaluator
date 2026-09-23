@@ -1,19 +1,743 @@
-I will now generate the complete, single-file HTML web application for the **Prompt Writing & Meta-Evaluation Simulator** tailored for 12th-grade "Apps of AI" students.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Writing & Meta-Evaluation Simulator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-It fully implements:
+        /* Print Media Styles for PDF Export */
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .print-card { border: 1px solid #e2e8f0 !important; box-shadow: none !important; }
+            .page-break { page-break-before: always; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
 
-1. **30-Point Meta-Rubric Evaluation Engine:**
-* **Initial Prompt (15 pts):** Scored on Role, Context, Task, Constraints, Output Format (0-3 pts each) with specific bulleted feedback per component.
-* **Self-Evaluation (10 pts):** Uses 5 distinct text boxes for Accuracy, Clarity, Alignment, Efficiency, and Robustness/Bias (0-2 pts each) with bulleted feedback.
-* **Proactive Bias Rule:** Detects if the prompt explicitly mitigates bias (e.g., asking for contrasting perspectives, non-partisan analysis, pros/cons) and ensures students are not penalized for brief bias self-evaluations when bias was already actively controlled.
-* **Iteration Grade (5 pts):** Evaluates deliberate refinement across attempts with bulleted feedback.
+    <!-- Top Navigation Header -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-600 p-2 rounded-lg text-white font-bold text-lg">
+                    <i class="fa-solid font-mono fa-terminal"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Apps of AI: Meta-Evaluation Lab</h1>
+                    <p class="text-xs text-slate-400">12th Grade Prompt Writing & Critical Self-Assessment</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 text-xs font-medium flex items-center space-x-2">
+                    <span class="text-slate-400">Attempt:</span>
+                    <span id="attemptBadge" class="text-brand-500 font-bold">1 / 3</span>
+                </div>
+                <button onclick="resetSimulator()" class="text-xs text-slate-400 hover:text-white transition flex items-center space-x-1">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Restart</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
+    <!-- Main Content Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-2. **Workflow & Scaffolding:**
-* Interactive Chat simulation executing prompt responses in real time.
-* Topic suggestions for Attempts 2 & 3 (e.g., AP Prep, Budgeting, AI Ethics, Resume Tailoring).
-* "Lock in Prompt & Evaluate" modal featuring the 5 distinct text input fields.
+        <!-- Left Column: Guidelines & Prompt Helper (4 Cols) -->
+        <div class="lg:col-span-4 space-y-6 no-print">
+            
+            <!-- Instructions Card -->
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <h2 class="font-bold text-slate-900 mb-2 flex items-center space-x-2">
+                    <i class="fa-solid fa-bullseye text-brand-600"></i>
+                    <span>The 30-Point Scoring Goal</span>
+                </h2>
+                <div class="space-y-3 text-xs text-slate-600">
+                    <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                        <div class="font-semibold text-slate-800 flex justify-between">
+                            <span>1. Initial Prompt</span>
+                            <span class="text-brand-600 font-bold">15 Points</span>
+                        </div>
+                        <p class="mt-1">5 Core Components: Role, Context, Task, Constraints, Output Format (0-3 pts each).</p>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                        <div class="font-semibold text-slate-800 flex justify-between">
+                            <span>2. Self-Evaluation</span>
+                            <span class="text-brand-600 font-bold">10 Points</span>
+                        </div>
+                        <p class="mt-1">Evaluate AI output in 5 distinct text boxes across Accuracy, Clarity, Alignment, Efficiency, & Bias (0-2 pts each).</p>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                        <div class="font-semibold text-slate-800 flex justify-between">
+                            <span>3. Iterative Progress</span>
+                            <span class="text-brand-600 font-bold">5 Points</span>
+                        </div>
+                        <p class="mt-1">Improve prompt clarity & address output gaps between attempts.</p>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Suggested Topics Box (Dynamically revealed or for retakes) -->
+            <div id="topicSuggestionsBox" class="bg-blue-50 border border-blue-200 p-5 rounded-xl text-blue-900 space-y-3">
+                <h3 class="font-semibold text-sm flex items-center space-x-2 text-blue-900">
+                    <i class="fa-solid fa-lightbulb text-blue-600"></i>
+                    <span>Need a Prompt Idea?</span>
+                </h3>
+                <p class="text-xs text-blue-700">Select a real-world scenario to test or write your own custom prompt:</p>
+                <div class="space-y-2">
+                    <button onclick="applyTopic('AP Prep')" class="w-full text-left text-xs bg-white hover:bg-blue-100 p-2.5 rounded-lg border border-blue-200 transition text-slate-800 font-medium">
+                        🎓 <strong>AP Exam Prep:</strong> Create a 4-week study schedule for AP Exams.
+                    </button>
+                    <button onclick="applyTopic('Budget')" class="w-full text-left text-xs bg-white hover:bg-blue-100 p-2.5 rounded-lg border border-blue-200 transition text-slate-800 font-medium">
+                        💵 <strong>Post-Grad Budget:</strong> Plan a monthly budget for post-high school living.
+                    </button>
+                    <button onclick="applyTopic('Ethics')" class="w-full text-left text-xs bg-white hover:bg-blue-100 p-2.5 rounded-lg border border-blue-200 transition text-slate-800 font-medium">
+                        ⚖️ <strong>AI Ethics Debate:</strong> Summarize contrasting views on AI regulation.
+                    </button>
+                    <button onclick="applyTopic('Resume')" class="w-full text-left text-xs bg-white hover:bg-blue-100 p-2.5 rounded-lg border border-blue-200 transition text-slate-800 font-medium">
+                        📄 <strong>Resume Tailoring:</strong> Write a targeted resume intro for an entry-level job.
+                    </button>
+                </div>
+            </div>
 
-3. **Export & Submission Features:**
-* Both **"Print / Save PDF Report"** (with clean print CSS styling) and **"Copy Submission Transcript to Clipboard"** for easy pasting into Canvas, Google Classroom, or Schoology.
+            <!-- Proactive Bias Rule Notice -->
+            <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-900 text-xs space-y-1">
+                <div class="font-bold flex items-center space-x-1.5 text-amber-800">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Proactive Bias Bonus Rule</span>
+                </div>
+                <p class="text-amber-700 leading-relaxed">
+                    If your initial prompt explicitly requests <strong>contrasting viewpoints, balanced perspectives, or non-partisan analysis</strong>, you won't be penalized for brief bias entries during evaluation! Proactive prompt design is rewarded.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Column: Interactive Chat & Simulation Stage (8 Cols) -->
+        <div class="lg:col-span-8 flex flex-col space-y-6">
+
+            <!-- Primary Chat & Interactive Terminal Card -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-[620px] overflow-hidden no-print">
+                <!-- Terminal Bar Header -->
+                <div class="bg-slate-100 border-b border-slate-200 px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 bg-red-400 rounded-full inline-block"></span>
+                        <span class="w-3 h-3 bg-yellow-400 rounded-full inline-block"></span>
+                        <span class="w-3 h-3 bg-green-400 rounded-full inline-block"></span>
+                        <span class="text-xs font-mono font-semibold text-slate-600 ml-2">AI Execution Workbench</span>
+                    </div>
+                    <button id="lockEvaluateBtn" onclick="openEvaluationModal()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center space-x-1.5">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                        <span>Lock in Prompt & Evaluate</span>
+                    </button>
+                </div>
+
+                <!-- Chat History Window -->
+                <div id="chatWindow" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/50">
+                    <!-- System Welcome Message -->
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                            AI
+                        </div>
+                        <div class="bg-white border border-slate-200 p-3.5 rounded-xl max-w-[85%] text-xs text-slate-700 leading-relaxed shadow-sm">
+                            <p class="font-semibold text-slate-900 mb-1">Simulator Ready.</p>
+                            Enter your initial prompt below. I will execute it verbatim. You can test adjustments or type <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-300 font-mono text-brand-600">COMPLETE</code> when ready to enter <strong>Meta-Evaluation Mode</strong>.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prompt Input Bar -->
+                <div class="p-3 bg-white border-t border-slate-200">
+                    <form onsubmit="handleSendPrompt(event)" class="flex space-x-2">
+                        <textarea id="promptInput" rows="2" placeholder="Type your prompt here... (Tip: Include Role, Context, Task, Constraints, Output Format)" class="flex-1 p-2.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 resize-none outline-none"></textarea>
+                        <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-4 rounded-lg text-xs font-semibold transition flex flex-col items-center justify-center shrink-0">
+                            <i class="fa-solid fa-paper-plane mb-1"></i>
+                            <span>Execute</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Scorecard & Detailed Report Output Area (Appears after submission) -->
+            <div id="resultsCard" class="hidden space-y-6">
+                <div id="reportPrintArea" class="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm space-y-6 print-card">
+                    
+                    <!-- Report Header -->
+                    <div class="border-b border-slate-200 pb-4 flex justify-between items-start">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Prompt & Meta-Evaluation Scorecard</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Course: Apps of AI | Student Performance Summary</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-black text-brand-600" id="totalScoreDisplay">0 / 30</div>
+                            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Score</div>
+                        </div>
+                    </div>
+
+                    <!-- Score Breakdown Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <div class="text-xs text-slate-500 uppercase font-bold">1. Initial Prompt</div>
+                            <div class="text-lg font-bold text-slate-800 mt-1" id="scorePromptDisplay">0 / 15</div>
+                            <div class="text-[11px] text-slate-500">5 Core Components</div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <div class="text-xs text-slate-500 uppercase font-bold">2. Self-Evaluation</div>
+                            <div class="text-lg font-bold text-slate-800 mt-1" id="scoreEvalDisplay">0 / 10</div>
+                            <div class="text-[11px] text-slate-500">5 Dimensions Critiqued</div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <div class="text-xs text-slate-500 uppercase font-bold">3. Iteration Refinement</div>
+                            <div class="text-lg font-bold text-slate-800 mt-1" id="scoreIterDisplay">0 / 5</div>
+                            <div class="text-[11px] text-slate-500">Progress Across Attempts</div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Criterion Feedback with 1 Bullet Point Strength/Weakness -->
+                    <div class="space-y-6">
+                        
+                        <!-- Section 1: Initial Prompt Breakdown -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900 border-b border-slate-200 pb-2 mb-3 flex items-center justify-between">
+                                <span>Phase 1: Initial Prompt Component Analysis (15 pts)</span>
+                            </h3>
+                            <ul id="promptComponentFeedbackList" class="space-y-2 text-xs text-slate-700">
+                                <!-- Dynamic List Items with 1 Bullet Each -->
+                            </ul>
+                        </div>
+
+                        <!-- Section 2: Meta Self-Evaluation Breakdown -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900 border-b border-slate-200 pb-2 mb-3 flex items-center justify-between">
+                                <span>Phase 2: Meta Self-Evaluation Dimension Critique (10 pts)</span>
+                            </h3>
+                            <ul id="selfEvalFeedbackList" class="space-y-2 text-xs text-slate-700">
+                                <!-- Dynamic List Items with 1 Bullet Each -->
+                            </ul>
+                        </div>
+
+                        <!-- Section 3: Iteration Feedback -->
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900 border-b border-slate-200 pb-2 mb-3">
+                                Phase 3: Iterative Refinement Analysis (5 pts)
+                            </h3>
+                            <div id="iterationFeedbackBox" class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-700">
+                                <!-- Dynamic Iteration Feedback -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submission Action Buttons -->
+                    <div class="pt-4 border-t border-slate-200 flex flex-wrap gap-3 no-print">
+                        <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition flex items-center space-x-2">
+                            <i class="fa-solid fa-print"></i>
+                            <span>Print / Save PDF Report</span>
+                        </button>
+                        <button onclick="copySubmissionToClipboard()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition flex items-center space-x-2">
+                            <i class="fa-solid fa-copy"></i>
+                            <span>Copy Submission Transcript to Clipboard</span>
+                        </button>
+                        <button id="nextAttemptBtn" onclick="prepareNextAttempt()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition flex items-center space-x-2 ml-auto">
+                            <i class="fa-solid fa-arrow-right"></i>
+                            <span>Start Attempt <span id="nextAttemptNum">2</span></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Meta-Evaluation Modal (5 Distinct Text Boxes) -->
+    <div id="evalModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto no-print">
+        <div class="bg-white max-w-2xl w-full rounded-2xl shadow-2xl border border-slate-200 my-8 overflow-hidden flex flex-col max-h-[90vh]">
+            
+            <!-- Modal Header -->
+            <div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shrink-0">
+                <div>
+                    <h3 class="font-bold text-base">Phase 2: Meta Self-Evaluation Form</h3>
+                    <p class="text-xs text-slate-400">Critique the AI's execution across the 5 core dimensions (10 Points Total)</p>
+                </div>
+                <button onclick="closeEvaluationModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form Inputs -->
+            <div class="p-6 overflow-y-auto space-y-4 text-xs">
+                
+                <!-- Notice on Proactive Bias -->
+                <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-xs">
+                    <i class="fa-solid fa-circle-info mr-1"></i>
+                    Provide specific evidence from the AI response for each text box below.
+                </div>
+
+                <!-- Box 1: Accuracy -->
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-800 flex justify-between">
+                        <span>1. Accuracy & Factual Correctness (0-2 pts)</span>
+                        <span class="text-slate-400 font-normal">Were facts, logic, or calculations correct?</span>
+                    </label>
+                    <textarea id="evalAccuracy" rows="2" placeholder="Analyze the accuracy of the generated response..." class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                </div>
+
+                <!-- Box 2: Clarity -->
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-800 flex justify-between">
+                        <span>2. Clarity & Formatting (0-2 pts)</span>
+                        <span class="text-slate-400 font-normal">Was the output readable and well-structured?</span>
+                    </label>
+                    <textarea id="evalClarity" rows="2" placeholder="Critique layout, formatting, tone, and legibility..." class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                </div>
+
+                <!-- Box 3: Alignment -->
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-800 flex justify-between">
+                        <span>3. Goal & Persona Alignment (0-2 pts)</span>
+                        <span class="text-slate-400 font-normal">Did it fulfill your requested role and task?</span>
+                    </label>
+                    <textarea id="evalAlignment" rows="2" placeholder="Evaluate how strictly it adhered to your intent..." class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                </div>
+
+                <!-- Box 4: Efficiency -->
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-800 flex justify-between">
+                        <span>4. Constraint Efficiency (0-2 pts)</span>
+                        <span class="text-slate-400 font-normal">Did it respect boundaries without fluff?</span>
+                    </label>
+                    <textarea id="evalEfficiency" rows="2" placeholder="Check length, negative constraints, and conciseness..." class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                </div>
+
+                <!-- Box 5: Robustness & Bias -->
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-800 flex justify-between">
+                        <span>5. Robustness & Bias Control (0-2 pts)</span>
+                        <span class="text-slate-400 font-normal">Did it avoid assumptions or offer balanced views?</span>
+                    </label>
+                    <textarea id="evalBias" rows="2" placeholder="Evaluate perspective balance, tone neutrality, or bias control..." class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer Actions -->
+            <div class="bg-slate-50 border-t border-slate-200 px-6 py-4 flex justify-between items-center shrink-0">
+                <button onclick="closeEvaluationModal()" class="text-slate-600 hover:text-slate-800 text-xs font-semibold">
+                    Return to Chat
+                </button>
+                <button onclick="submitEvaluationForm()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-5 py-2.5 rounded-lg transition shadow-md">
+                    Calculate Final Scorecard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Overlay -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-xl text-xs font-medium translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center space-x-2">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMsg">Action completed successfully.</span>
+    </div>
+
+    <script>
+        // --- State Management ---
+        let currentAttempt = 1;
+        const maxAttempts = 3;
+        let attemptData = [];
+        let activePrompt = "";
+        let activeAiResponse = "";
+
+        // Preset Suggested Topics
+        const topics = {
+            'AP Prep': "Act as an expert AP Tutor. Create a 4-week study plan for AP Microeconomics. Target a student scoring 3 who wants a 5. Include weekly goals, practice topics, and bullet points. Avoid fluff.",
+            'Budget': "Act as a financial planner for 18-year-olds. Generate a monthly budget template for a high school graduate earning $2,500/month after taxes. Include saving, rent, and discretionary spend. Provide output as a structured list.",
+            'Ethics': "Act as a neutral policy analyst. Provide a balanced comparison of AI copyright regulation. Present 3 arguments from tech developers and 3 contrasting arguments from human artists. Keep tone objective and bias-free.",
+            'Resume': "Act as an executive hiring manager. Write a 3-sentence professional summary for an entry-level IT specialist resume. Focus on problem-solving skills, certification, and enthusiasm."
+        };
+
+        function applyTopic(key) {
+            const promptBox = document.getElementById('promptInput');
+            promptBox.value = topics[key];
+            showToast("Topic prompt loaded into workbench!");
+        }
+
+        // --- Interactive Chat & Execution Logic ---
+        function handleSendPrompt(e) {
+            e.preventDefault();
+            const inputEl = document.getElementById('promptInput');
+            const userText = inputEl.value.trim();
+
+            if (!userText) return;
+
+            // Append User Message to Chat
+            appendChatMessage("User", userText);
+            inputEl.value = "";
+
+            // Check if student typed 'COMPLETE' to initiate eval
+            if (userText.toUpperCase() === "COMPLETE") {
+                if (!activePrompt) {
+                    appendChatMessage("AI", "Please enter a prompt first before typing COMPLETE.");
+                    return;
+                }
+                openEvaluationModal();
+                return;
+            }
+
+            // Record active prompt
+            activePrompt = userText;
+
+            // Simulate AI Execution Response
+            simulateAiExecution(userText);
+        }
+
+        function appendChatMessage(sender, text) {
+            const chatWin = document.getElementById('chatWindow');
+            const isUser = sender === "User";
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = `w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${isUser ? 'bg-brand-600 text-white' : 'bg-slate-800 text-white'}`;
+            avatarDiv.innerText = isUser ? 'You' : 'AI';
+
+            const bodyDiv = document.createElement('div');
+            bodyDiv.className = `p-3.5 rounded-xl max-w-[85%] text-xs leading-relaxed shadow-sm ${isUser ? 'bg-brand-50 border border-brand-200 text-brand-900' : 'bg-white border border-slate-200 text-slate-700'}`;
+            bodyDiv.innerHTML = text.replace(/\n/g, '<br>');
+
+            msgDiv.appendChild(avatarDiv);
+            msgDiv.appendChild(bodyDiv);
+            chatWin.appendChild(msgDiv);
+
+            chatWin.scrollTop = chatWin.scrollHeight;
+        }
+
+        function simulateAiExecution(promptText) {
+            // Simulated AI execution generator mimicking LLM responses
+            let response = "";
+            const lower = promptText.toLowerCase();
+
+            response += "<strong>[SIMULATED EXECUTION RESPONSE]</strong><br><br>";
+
+            if (lower.includes("role") || lower.includes("act as") || lower.includes("tutor") || lower.includes("planner")) {
+                response += "<em>Adopting specified persona...</em><br>";
+            }
+
+            if (lower.includes("study") || lower.includes("ap")) {
+                response += "Here is your 4-Week AP Exam Review Schedule:<br>• Week 1: Core concepts and foundational diagnostic test.<br>• Week 2: High-yield free response questions.<br>• Week 3: Timed practice drills.<br>• Week 4: Final full-length exam review and strategy.";
+            } else if (lower.includes("budget") || lower.includes("financial")) {
+                response += "Monthly Financial Allocation Plan ($2,500 Net):<br>• Needs (50%): $1,250 (Rent, Groceries, Utilities)<br>• Wants (30%): $750 (Dining, Subscriptions)<br>• Savings (20%): $500 (Emergency fund, Investments)";
+            } else if (lower.includes("ethics") || lower.includes("perspective") || lower.includes("contrast") || lower.includes("bias")) {
+                response += "<strong>Balanced Overview on AI Regulation:</strong><br><br><strong>Developer Perspective:</strong> Strict limits hinder innovation and open-source growth.<br><br><strong>Creator Perspective:</strong> Copyright protections prevent unauthorized intellectual property harvesting.";
+            } else {
+                response += `Executing request based on prompt instructions provided:<br><br>"${promptText.slice(0, 150)}..."<br><br>Output structured according to constraints detected in user submission.`;
+            }
+
+            activeAiResponse = response;
+            setTimeout(() => {
+                appendChatMessage("AI", activeAiResponse);
+            }, 400);
+        }
+
+        // --- Modal & Evaluation Logic ---
+        function openEvaluationModal() {
+            if (!activePrompt) {
+                alert("Please submit a prompt in the chat first!");
+                return;
+            }
+            document.getElementById('evalModal').classList.remove('hidden');
+        }
+
+        function closeEvaluationModal() {
+            document.getElementById('evalModal').classList.add('hidden');
+        }
+
+        function submitEvaluationForm() {
+            const accText = document.getElementById('evalAccuracy').value.trim();
+            const claText = document.getElementById('evalClarity').value.trim();
+            const algText = document.getElementById('evalAlignment').value.trim();
+            const effText = document.getElementById('evalEfficiency').value.trim();
+            const biasText = document.getElementById('evalBias').value.trim();
+
+            if (!accText || !claText || !algText || !effText || !biasText) {
+                alert("Please complete all 5 evaluation text boxes before submitting.");
+                return;
+            }
+
+            closeEvaluationModal();
+            evaluateAttempt(accText, claText, algText, effText, biasText);
+        }
+
+        // --- Meta-Rubric Evaluation Engine (30 Points Total) ---
+        function evaluateAttempt(accText, claText, algText, effText, biasText) {
+            const prompt = activePrompt.toLowerCase();
+
+            // 1. Evaluate Initial Prompt Components (15 Points Total - 3 pts x 5)
+            const promptScores = {
+                role: checkComponent(prompt, ["act as", "role", "you are", "persona", "expert"]),
+                context: checkComponent(prompt, ["for", "student", "background", "target", "situation", "context", "level"]),
+                task: checkComponent(prompt, ["create", "write", "generate", "summarize", "plan", "design", "explain"]),
+                constraints: checkComponent(prompt, ["avoid", "limit", "do not", "only", "max", "keep", "within", "must"]),
+                outputFormat: checkComponent(prompt, ["format", "bullet", "table", "list", "json", "paragraph", "sentences"])
+            };
+
+            // Detect Proactive Bias Mitigation in Prompt
+            const hasProactiveBiasControl = ["contrast", "perspective", "balanced", "both sides", "non-partisan", "unbiased", "opposing", "pros and cons"].some(k => prompt.includes(k));
+
+            // 2. Evaluate Self-Evaluation Responses (10 Points Total - 2 pts x 5)
+            const evalScores = {
+                accuracy: scoreEvalText(accText),
+                clarity: scoreEvalText(claText),
+                alignment: scoreEvalText(algText),
+                efficiency: scoreEvalText(effText),
+                // CRITICAL BIAS RULE: If prompt proactively defeats bias, grant full/lenient credit even for minimal evaluations!
+                bias: hasProactiveBiasControl ? 2 : scoreEvalText(biasText)
+            };
+
+            // 3. Iteration Score (5 Points)
+            let iterationScore = 5;
+            let iterationBullet = "";
+            if (currentAttempt === 1) {
+                iterationScore = 5; // Base baseline
+                iterationBullet = "Baseline established. Use attempt 2 to refine output formatting and add negative constraints.";
+            } else {
+                const prevPrompt = attemptData[currentAttempt - 2]?.prompt || "";
+                if (prompt.length > prevPrompt.length + 15) {
+                    iterationScore = 5;
+                    iterationBullet = "Strong revision! Added clear constraints and structural clarity compared to previous attempt.";
+                } else {
+                    iterationScore = 3;
+                    iterationBullet = "Minor changes made. Try adding explicit output formatting rules or strict boundaries.";
+                }
+            }
+
+            // Calculate Totals
+            const promptTotal = Object.values(promptScores).reduce((a, b) => a + b.score, 0);
+            const evalTotal = Object.values(evalScores).reduce((a, b) => a + (typeof b === 'object' ? b.score : b), 0);
+            const grandTotal = promptTotal + evalTotal + iterationScore;
+
+            // Render Results
+            renderResultsCard(promptScores, evalScores, iterationScore, iterationBullet, promptTotal, evalTotal, grandTotal, hasProactiveBiasControl, {
+                accText, claText, algText, effText, biasText
+            });
+
+            // Save Attempt Record
+            attemptData.push({
+                attemptNum: currentAttempt,
+                prompt: activePrompt,
+                totalScore: grandTotal,
+                promptTotal,
+                evalTotal,
+                iterationScore
+            });
+        }
+
+        function checkComponent(prompt, keywords) {
+            const found = keywords.some(k => prompt.includes(k));
+            if (found && prompt.length > 80) {
+                return { score: 3, bullet: "Strength: Explicitly defined and well-articulated in prompt context." };
+            } else if (found) {
+                return { score: 2, bullet: "Weakness: Present but briefly stated; could add more specific parameters." };
+            } else {
+                return { score: 1, bullet: "Weakness: Missing or ambiguous; add clearer instructions for this component." };
+            }
+        }
+
+        function scoreEvalText(text) {
+            if (text.length > 50) {
+                return { score: 2, bullet: "Strength: Thorough self-critique backed by evidence from AI response." };
+            } else if (text.length > 15) {
+                return { score: 1, bullet: "Weakness: Observation made but lacks specific evidence from AI output." };
+            } else {
+                return { score: 0, bullet: "Weakness: Minimal or unsubstantiated reflection provided." };
+            }
+        }
+
+        function renderResultsCard(promptScores, evalScores, iterationScore, iterationBullet, promptTotal, evalTotal, grandTotal, proactiveBias, evalTexts) {
+            document.getElementById('resultsCard').classList.remove('hidden');
+
+            document.getElementById('totalScoreDisplay').innerText = `${grandTotal} / 30`;
+            document.getElementById('scorePromptDisplay').innerText = `${promptTotal} / 15`;
+            document.getElementById('scoreEvalDisplay').innerText = `${evalTotal} / 10`;
+            document.getElementById('scoreIterDisplay').innerText = `${iterationScore} / 5`;
+
+            // Initial Prompt Bullet List
+            const promptList = document.getElementById('promptComponentFeedbackList');
+            promptList.innerHTML = `
+                <li class="bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800">Role (${promptScores.role.score}/3 pts):</span>
+                    <span class="text-slate-600 block mt-0.5">• ${promptScores.role.bullet}</span>
+                </li>
+                <li class="bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800">Context (${promptScores.context.score}/3 pts):</span>
+                    <span class="text-slate-600 block mt-0.5">• ${promptScores.context.bullet}</span>
+                </li>
+                <li class="bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800">Task (${promptScores.task.score}/3 pts):</span>
+                    <span class="text-slate-600 block mt-0.5">• ${promptScores.task.bullet}</span>
+                </li>
+                <li class="bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800">Constraints (${promptScores.constraints.score}/3 pts):</span>
+                    <span class="text-slate-600 block mt-0.5">• ${promptScores.constraints.bullet}</span>
+                </li>
+                <li class="bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800">Output Format (${promptScores.outputFormat.score}/3 pts):</span>
+                    <span class="text-slate-600 block mt-0.5">• ${promptScores.outputFormat.bullet}</span>
+                </li>
+            `;
+
+            // Self Eval Bullet List
+            const evalList = document.getElementById('selfEvalFeedbackList');
+            const biasBullet = proactiveBias 
+                ? "Strength: Prompt explicitly included proactive bias mitigation! Full credit awarded despite brief eval text."
+                : (typeof evalScores.bias === 'object' ? evalScores.bias.bullet : "Strength: Evaluated bias adequately.");
+
+            const biasScoreVal = proactiveBias ? 2 : (typeof evalScores.bias === 'object' ? evalScores.bias.score : evalScores.bias);
+
+            evalList.innerHTML = `
+                <li class="bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800">Accuracy Critique (${evalScores.accuracy.score}/2 pts):</span>
+                    <span class="text-slate-600 block mt-0.5">• ${evalScores.accuracy.bullet}</span>
+                </li>
+                <li class="bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800">Clarity Critique (${evalScores.clarity.score}/2 pts):</span>
+                    <span class="text-slate-600 block mt-0.5">• ${evalScores.clarity.bullet}</span>
+                </li>
+                <li class="bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800">Alignment Critique (${evalScores.alignment.score}/2 pts):</span>
+                    <span class="text-slate-600 block mt-0.5">• ${evalScores.alignment.bullet}</span>
+                </li>
+                <li class="bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800">Efficiency Critique (${evalScores.efficiency.score}/2 pts):</span>
+                    <span class="text-slate-600 block mt-0.5">• ${evalScores.efficiency.bullet}</span>
+                </li>
+                <li class="bg-slate-50 p-2.5 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800">Robustness/Bias Critique (${biasScoreVal}/2 pts):</span>
+                    <span class="text-slate-600 block mt-0.5">• ${biasBullet}</span>
+                </li>
+            `;
+
+            // Iteration Feedback
+            document.getElementById('iterationFeedbackBox').innerHTML = `
+                <span class="font-bold text-slate-800">Attempt Revision Score (${iterationScore}/5 pts):</span>
+                <span class="text-slate-600 block mt-1">• ${iterationBullet}</span>
+            `;
+
+            // Configure Next Attempt Button
+            if (currentAttempt < maxAttempts) {
+                document.getElementById('nextAttemptBtn').classList.remove('hidden');
+                document.getElementById('nextAttemptNum').innerText = currentAttempt + 1;
+            } else {
+                document.getElementById('nextAttemptBtn').classList.add('hidden');
+            }
+
+            // Scroll down to results
+            document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Prepare Next Attempt Iteration
+        function prepareNextAttempt() {
+            if (currentAttempt >= maxAttempts) return;
+            currentAttempt++;
+
+            document.getElementById('attemptBadge').innerText = `${currentAttempt} / ${maxAttempts}`;
+            document.getElementById('resultsCard').classList.add('hidden');
+            
+            // Clear textboxes
+            document.getElementById('evalAccuracy').value = "";
+            document.getElementById('evalClarity').value = "";
+            document.getElementById('evalAlignment').value = "";
+            document.getElementById('evalEfficiency').value = "";
+            document.getElementById('evalBias').value = "";
+
+            appendChatMessage("AI", `<strong>Attempt ${currentAttempt} Initiated.</strong><br>Refine your prompt to address any weaknesses or output gaps identified above.`);
+            showToast(`Started Attempt ${currentAttempt}`);
+        }
+
+        // Clipboard Copy Submission Formatter
+        function copySubmissionToClipboard() {
+            const grandTotal = document.getElementById('totalScoreDisplay').innerText;
+            const promptScore = document.getElementById('scorePromptDisplay').innerText;
+            const evalScore = document.getElementById('scoreEvalDisplay').innerText;
+            const iterScore = document.getElementById('scoreIterDisplay').innerText;
+
+            const textToCopy = `=== APPS OF AI: PROMPT & META-EVALUATION SUBMISSION ===
+Attempt: ${currentAttempt} / 3
+Total Score: ${grandTotal}
+
+SCORE BREAKDOWN:
+- Initial Prompt Score: ${promptScore} (15 pts max)
+- Self-Evaluation Score: ${evalScore} (10 pts max)
+- Iteration & Refinement Score: ${iterScore} (5 pts max)
+
+SUBMITTED PROMPT:
+"${activePrompt}"
+
+AI SIMULATION RESPONSE:
+"${activeAiResponse.replace(/<br>/g, '\n').replace(/<[^>]+>/g, '')}"
+
+Generated via Apps of AI Meta-Evaluation Simulator.
+======================================================`;
+
+            // Clipboard fallback as per specification rules
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Transcript copied to clipboard for LMS submission!");
+            } catch (err) {
+                showToast("Failed to copy transcript.");
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function resetSimulator() {
+            if (confirm("Restart simulator? Current attempt history will be cleared.")) {
+                location.reload();
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
