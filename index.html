@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apps of AI: Prompt Writing & Evaluation Simulator</title>
+  <title>Apps of AI: Live Prompt & Evaluation Simulator</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Free Zero-Setup Live AI Engine -->
+  <script src="https://js.puter.com/v2/"></script>
   <style>
     @media print {
       body { background: white !important; color: black !important; }
@@ -19,8 +21,8 @@
   <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-lg no-print">
     <div class="max-w-5xl mx-auto flex justify-between items-center">
       <div>
-        <h1 class="text-xl font-bold text-indigo-400">Apps of AI: Prompt & Evaluation Simulator</h1>
-        <p class="text-xs text-slate-400">12th Grade AI Course | 30-Point Meta-Rubric Assessment</p>
+        <h1 class="text-xl font-bold text-indigo-400">Apps of AI: Prompt & Evaluation Lab</h1>
+        <p class="text-xs text-slate-400">12th Grade AI Course | Live LLM Integration & 30-Point Meta-Rubric</p>
       </div>
       <div class="flex items-center space-x-3">
         <span id="attempt-badge" class="px-3 py-1 bg-indigo-900/80 text-indigo-300 border border-indigo-700 text-xs font-semibold rounded-full">
@@ -37,12 +39,12 @@
   <main class="max-w-5xl mx-auto w-full flex-1 p-4 flex flex-col gap-6">
 
     <!-- Active Chat / Interaction Window -->
-    <section id="chat-section" class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[520px] shadow-xl overflow-hidden no-print">
+    <section id="chat-section" class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[550px] shadow-xl overflow-hidden no-print">
       <!-- Chat Header -->
       <div class="bg-slate-800/90 border-b border-slate-700 p-3 px-4 flex justify-between items-center">
         <div class="flex items-center space-x-2">
-          <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-          <span class="text-sm font-medium text-slate-200">AI Execution Engine</span>
+          <div id="ai-status-dot" class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span id="ai-status-text" class="text-sm font-medium text-slate-200">Live AI Engine Active</span>
         </div>
         <span class="text-xs text-slate-400">Type <code class="bg-slate-700 px-1 py-0.5 rounded text-amber-300 font-mono">COMPLETE</code> to finish attempt</span>
       </div>
@@ -53,24 +55,24 @@
         <div class="flex items-start space-x-3">
           <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-xs shrink-0">AI</div>
           <div class="bg-slate-700/80 border border-slate-600/60 p-3.5 rounded-xl rounded-tl-none max-w-[85%] text-sm leading-relaxed text-slate-200">
-            Welcome to the Prompt Writing & Evaluation Lab! Your goal is to craft a complete prompt using the 5 Core Components (<strong>Role, Context, Task, Constraints, Output Format</strong>).
+            Welcome to the Live Prompt Engineering Lab! Craft a complete prompt using the 5 Core Components (<strong>Role, Context, Task, Constraints, Output Format</strong>).
             <br><br>
-            Submit your initial prompt below to execute it. When you are satisfied with the interaction, type <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">COMPLETE</code> to lock in your prompt and enter Self-Evaluation mode.
+            When submitted, a live language model will process your prompt in real-time. When you're finished testing, type <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">COMPLETE</code> to lock in your work and enter Self-Evaluation mode.
           </div>
         </div>
       </div>
 
-      <!-- Topic Suggestions (Shown on Attempts 2 & 3 if stuck) -->
-      <div id="topic-suggestions" class="hidden bg-indigo-950/60 border-t border-indigo-800/50 p-2 px-4 text-xs flex items-center gap-2 overflow-x-auto">
-        <span class="text-indigo-300 font-semibold whitespace-nowrap">Need an idea?</span>
-        <button onclick="useTopic('Ice Cream Recipe Master')" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-md border border-indigo-700/50 whitespace-nowrap transition">
-          💡 Homemade Ice Cream
+      <!-- Topic Quick-Start Buttons -->
+      <div id="topic-suggestions" class="bg-indigo-950/60 border-t border-indigo-800/50 p-2 px-4 text-xs flex items-center gap-2 overflow-x-auto">
+        <span class="text-indigo-300 font-semibold whitespace-nowrap">Topic Templates:</span>
+        <button onclick="useTopic('Ice Cream')" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-md border border-indigo-700/50 whitespace-nowrap transition">
+          🍨 Ice Cream Recipe
         </button>
-        <button onclick="useTopic('AP Exam Prep Coach')" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-md border border-indigo-700/50 whitespace-nowrap transition">
-          💡 AP Exam Study Plan
+        <button onclick="useTopic('AP Exam')" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-md border border-indigo-700/50 whitespace-nowrap transition">
+          📚 AP Study Coach
         </button>
-        <button onclick="useTopic('Post-Grad Budget Advisor')" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-md border border-indigo-700/50 whitespace-nowrap transition">
-          💡 Post-Grad Financial Plan
+        <button onclick="useTopic('Budget')" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-md border border-indigo-700/50 whitespace-nowrap transition">
+          💵 Budget Planning
         </button>
       </div>
 
@@ -79,50 +81,47 @@
         <form id="chat-form" onsubmit="handleSend(event)" class="flex gap-2">
           <input type="text" id="user-input" autocomplete="off" placeholder="Type your structured prompt or 'COMPLETE'..." 
             class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-          <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm px-5 py-2.5 rounded-lg transition shadow-md">
-            Send
+          <button id="send-btn" type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm px-5 py-2.5 rounded-lg transition shadow-md flex items-center gap-2">
+            <span>Send</span>
           </button>
         </form>
       </div>
     </section>
 
-    <!-- Self-Evaluation Modal / Drawer -->
+    <!-- Self-Evaluation Section -->
     <section id="eval-modal" class="hidden bg-slate-800 border border-indigo-500/50 rounded-xl p-6 shadow-2xl no-print space-y-6">
       <div class="border-b border-slate-700 pb-3 flex justify-between items-center">
         <div>
           <h2 class="text-lg font-bold text-amber-300">Phase 2: Self-Evaluation Matrix (10 Points)</h2>
-          <p class="text-xs text-slate-400">Critique the AI's response to your prompt across the 5 Dimensions. Provide concrete examples from the output.</p>
+          <p class="text-xs text-slate-400">Critique the live AI's response to your prompt across all 5 dimensions.</p>
         </div>
-        <span class="text-xs font-mono bg-amber-950 text-amber-300 border border-amber-700/50 px-2.5 py-1 rounded">2 pts per box</span>
+        <span class="text-xs font-mono bg-amber-950 text-amber-300 border border-amber-700/50 px-2.5 py-1 rounded">2 pts per area</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">1. Accuracy & Factuality</label>
-          <textarea id="eval-acc" rows="2" placeholder="Were facts, logic, or calculations correct? Point to specific output examples..." 
+          <textarea id="eval-acc" rows="2" placeholder="Were measurements, facts, or instructions accurate in the AI response?..." 
             class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"></textarea>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">2. Clarity & Formatting</label>
-          <textarea id="eval-clar" rows="2" placeholder="Did the AI follow structural rules (headers, lists, tone)?..." 
+          <textarea id="eval-clar" rows="2" placeholder="Did the AI follow your structural requests (bullets, headers, tone)?..." 
             class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"></textarea>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">3. Goal Alignment</label>
-          <textarea id="eval-align" rows="2" placeholder="Did the output satisfy your core intent and user constraints?..." 
+          <textarea id="eval-align" rows="2" placeholder="Did the output directly fulfill your stated goal and task?..." 
             class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"></textarea>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">4. Efficiency & Conciseness</label>
-          <textarea id="eval-eff" rows="2" placeholder="Was there fluff or missing vital info? Was the length appropriate?..." 
+          <textarea id="eval-eff" rows="2" placeholder="Was there excess fluff or unnecessary repetition in the answer?..." 
             class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"></textarea>
         </div>
         <div class="md:col-span-2">
-          <label class="block text-xs font-semibold text-slate-300 mb-1">
-            5. Robustness & Bias Awareness 
-            <span class="text-slate-400 font-normal">(Note: If your prompt proactively requested balanced perspectives, brief evaluations are acceptable)</span>
-          </label>
-          <textarea id="eval-rob" rows="2" placeholder="Did the output exhibit bias, assumptions, or edge-case failures?..." 
+          <label class="block text-xs font-semibold text-slate-300 mb-1">5. Robustness & Bias Awareness</label>
+          <textarea id="eval-rob" rows="2" placeholder="Did the output exhibit unstated assumptions, bias, or safety issues?..." 
             class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"></textarea>
         </div>
       </div>
@@ -140,7 +139,7 @@
       <div class="flex justify-between items-start border-b border-slate-700 pb-4">
         <div>
           <h2 class="text-xl font-bold text-indigo-300">Final Assessment Scorecard</h2>
-          <p class="text-xs text-slate-400">Apps of AI | 30-Point Meta-Rubric Evaluation</p>
+          <p class="text-xs text-slate-400">Apps of AI | 30-Point Rubric Breakdown</p>
         </div>
         <div class="text-right">
           <div id="total-score-display" class="text-3xl font-extrabold text-amber-400">0 / 30</div>
@@ -161,22 +160,22 @@
           <ul id="eval-feedback-list" class="mt-2 text-xs space-y-1 text-slate-300 list-disc list-inside"></ul>
         </div>
         <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
-          <div class="text-xs text-slate-400">Part 3: Iteration & Refinement</div>
+          <div class="text-xs text-slate-400">Part 3: Iteration</div>
           <div id="iter-score-val" class="text-xl font-bold text-indigo-400">0 / 5 pts</div>
           <ul id="iter-feedback-list" class="mt-2 text-xs space-y-1 text-slate-300 list-disc list-inside"></ul>
         </div>
       </div>
 
-      <!-- Retake Action or Turn-In -->
+      <!-- Actions -->
       <div class="flex flex-wrap gap-3 pt-2 no-print">
         <button id="retake-btn" onclick="startRetake()" class="hidden bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition">
           🔄 Retake Challenge (Attempt <span id="next-attempt-num">2</span> of 3)
         </button>
         <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs font-semibold px-4 py-2.5 rounded-lg transition">
-          🖨️ Print / Save as PDF
+          🖨️ Print / Save PDF
         </button>
         <button onclick="copyTranscript()" class="bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs font-semibold px-4 py-2.5 rounded-lg transition">
-          📋 Copy Submission Code
+          📋 Copy Summary
         </button>
       </div>
     </section>
@@ -188,9 +187,9 @@
     let currentAttempt = 1;
     let maxAttempts = 3;
     let initialPromptText = "";
-    let promptHistory = [];
+    let chatConversation = [];
 
-    function handleSend(e) {
+    async function handleSend(e) {
       e.preventDefault();
       const inputEl = document.getElementById('user-input');
       const text = inputEl.value.trim();
@@ -201,7 +200,7 @@
 
       if (text.toUpperCase() === 'COMPLETE') {
         if (!initialPromptText) {
-          appendMessage('ai', "You haven't submitted an initial prompt yet! Please type your prompt first before typing COMPLETE.");
+          appendMessage('ai', "Please enter an initial prompt to test with the AI before typing COMPLETE.");
           return;
         }
         openEvalModal();
@@ -211,11 +210,34 @@
       if (!initialPromptText) {
         initialPromptText = text;
       }
-      promptHistory.push(text);
 
-      setTimeout(() => {
-        simulateDynamicAIExecution(text);
-      }, 500);
+      chatConversation.push({ role: 'user', content: text });
+
+      // Show typing indicator
+      const loadingId = appendLoadingIndicator();
+
+      try {
+        let aiResponse = "";
+        
+        // Execute Live LLM Request via Puter JS SDK if loaded
+        if (window.puter && puter.ai) {
+          const res = await puter.ai.chat(text);
+          aiResponse = typeof res === 'string' ? res : (res.message?.content || res.toString());
+        } else {
+          // Dynamic offline backup generator
+          aiResponse = generateFallbackResponse(text);
+        }
+
+        removeLoadingIndicator(loadingId);
+        appendMessage('ai', formatMarkdown(aiResponse));
+        chatConversation.push({ role: 'assistant', content: aiResponse });
+
+      } catch (err) {
+        console.warn("Live API encounter:", err);
+        removeLoadingIndicator(loadingId);
+        const fallbackText = generateFallbackResponse(text);
+        appendMessage('ai', formatMarkdown(fallbackText));
+      }
     }
 
     function appendMessage(sender, text) {
@@ -241,43 +263,49 @@
       list.scrollTop = list.scrollHeight;
     }
 
-    // Dynamic Execution Logic: Reflects user's actual prompt topic
-    function simulateDynamicAIExecution(promptText) {
-      const lower = promptText.toLowerCase();
-      let response = `<strong>[Executed Prompt Output]</strong><br><br>`;
+    function appendLoadingIndicator() {
+      const list = document.getElementById('message-list');
+      const id = 'loading-' + Date.now();
+      const wrapper = document.createElement('div');
+      wrapper.id = id;
+      wrapper.className = "flex items-start space-x-3";
+      wrapper.innerHTML = `
+        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-xs shrink-0">AI</div>
+        <div class="bg-slate-700/80 border border-slate-600/60 p-3.5 rounded-xl rounded-tl-none text-sm text-slate-400 flex items-center space-x-2">
+          <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
+          <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+          <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+          <span class="text-xs ml-2">Generating live response...</span>
+        </div>
+      `;
+      list.appendChild(wrapper);
+      list.scrollTop = list.scrollHeight;
+      return id;
+    }
 
-      // Extract subject keywords dynamically
-      let topic = "your scenario";
+    function removeLoadingIndicator(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    // Dynamic backup in case of client network filtering
+    function generateFallbackResponse(text) {
+      const lower = text.toLowerCase();
       if (lower.includes("ice cream") || lower.includes("strawberry") || lower.includes("chocolate")) {
-        topic = "homemade ice cream making";
-      } else if (lower.includes("exam") || lower.includes("ap ") || lower.includes("study")) {
-        topic = "exam preparation & study planning";
-      } else if (lower.includes("budget") || lower.includes("money") || lower.includes("finance")) {
-        topic = "personal financial planning";
+        return "### Homemade Ice Cream Recipe\n\n" +
+               "**Ingredients:**\n" +
+               "* 2 cups heavy whipping cream (cold)\n" +
+               "* 1 can (14 oz) sweetened condensed milk\n" +
+               "* 1 tsp pure vanilla extract\n" +
+               "* Mix-ins: Fresh strawberry puree or chocolate chips\n\n" +
+               "**Instructions:**\n" +
+               "1. **Whip:** In a chilled bowl, whip heavy cream until stiff peaks form.\n" +
+               "2. **Fold:** Gently fold in sweetened condensed milk and vanilla until smooth.\n" +
+               "3. **Flavor:** Swirl in your strawberry reduction or chocolate mix-ins.\n" +
+               "4. **Freeze:** Transfer to a freezer-safe dish and freeze for 6 hours.\n\n" +
+               "*Cost: ~$12 total. No ice cream maker required!*";
       }
-
-      response += `Directly executing your prompt regarding <strong>${topic}</strong>:<br><br>`;
-
-      // Generate dynamic content based on keywords detected in prompt
-      if (topic === "homemade ice cream making") {
-        response += `<strong>Recipe & Process Breakdown:</strong><br>`;
-        response += `1. <strong>Method:</strong> No-churn method (Heavy cream + Sweetened condensed milk).<br>`;
-        response += `2. <strong>Equipment Required:</strong> Stand mixer or hand whisk + freezer-safe container.<br>`;
-        response += `3. <strong>Flavors:</strong> Fresh Strawberry reduction & Chocolate-Banana-Almond-Cherry mix-ins.<br><br>`;
-      } else {
-        response += `1. <strong>Core Objective:</strong> Satisfying your main prompt task with structured guidance.<br>`;
-        response += `2. <strong>Key Steps:</strong> Outlining actionable instructions customized to your specified context.<br><br>`;
-      }
-
-      response += `<strong>Format & Constraints Applied:</strong><br>`;
-      response += `<ul class="list-disc list-inside space-y-1 text-slate-300">`;
-      response += `<li>Role persona reflected in tone and vocabulary.</li>`;
-      response += `<li>Constraints applied: ${lower.includes("no") || lower.includes("don't") || lower.includes("only") ? "Explicit restrictions strictly followed." : "General parameters maintained."}</li>`;
-      response += `</ul><br>`;
-
-      response += `<em>Type <code class="bg-slate-800 px-1 py-0.5 rounded text-amber-300 font-mono">COMPLETE</code> when you are ready to evaluate this AI output!</em>`;
-
-      appendMessage('ai', response);
+      return `Here is a custom response tailored to your request:\n\n1. **Overview:** Executing parameters for your task.\n2. **Details:** Addressing your prompt criteria with structured guidelines.\n\n*Type COMPLETE when ready to evaluate!*`;
     }
 
     function openEvalModal() {
@@ -297,12 +325,12 @@
       const rob = document.getElementById('eval-rob').value.trim();
 
       if (!acc || !clar || !align || !eff || !rob) {
-        alert("Please fill out all 5 evaluation dimensions before submitting.");
+        alert("Please complete all 5 evaluation boxes before submitting.");
         return;
       }
 
       const promptEval = gradePrompt(initialPromptText);
-      const selfEval = gradeSelfEval(acc, clar, align, eff, rob, initialPromptText);
+      const selfEval = gradeSelfEval(acc, clar, align, eff, rob);
       const iterEval = gradeIteration();
 
       const totalScore = promptEval.score + selfEval.score + iterEval.score;
@@ -336,86 +364,64 @@
 
       if (lower.includes('act as') || lower.includes('you are') || lower.includes('role') || lower.includes('expert')) {
         score += 3;
-        bullets.push("Role: Defined persona/role clearly (+3 pts)");
+        bullets.push("Role: Clear persona defined (+3 pts)");
       } else {
         score += 1;
-        bullets.push("Role: Implicit/weak persona definition (+1 pt)");
+        bullets.push("Role: Implicit persona (+1 pt)");
       }
 
-      if (prompt.length > 40) {
+      if (prompt.length > 35) {
         score += 3;
-        bullets.push("Context: Provided relevant background details (+3 pts)");
+        bullets.push("Context: Background details provided (+3 pts)");
       } else {
         score += 1;
-        bullets.push("Context: Limited background context (+1 pt)");
+        bullets.push("Context: Minimal background (+1 pt)");
       }
 
-      if (lower.includes('make') || lower.includes('recipe') || lower.includes('create') || lower.includes('explain') || lower.includes('how')) {
+      if (lower.includes('create') || lower.includes('make') || lower.includes('recipe') || lower.includes('explain') || lower.includes('build')) {
         score += 3;
-        bullets.push("Task: Clear action verb & primary objective (+3 pts)");
+        bullets.push("Task: Explicit primary objective (+3 pts)");
       } else {
         score += 2;
-        bullets.push("Task: Adequate task statement (+2 pts)");
+        bullets.push("Task: Broad primary objective (+2 pts)");
       }
 
-      if (lower.includes('no') || lower.includes('don\'t') || lower.includes('cheap') || lower.includes('easy') || lower.includes('gallon') || lower.includes('limit')) {
+      if (lower.includes('no') || lower.includes('don\'t') || lower.includes('under') || lower.includes('limit') || lower.includes('only')) {
         score += 3;
-        bullets.push("Constraints: Explicit parameters/restrictions specified (+3 pts)");
+        bullets.push("Constraints: Clear boundaries set (+3 pts)");
       } else {
         score += 1;
-        bullets.push("Constraints: Few or no clear restrictions (+1 pt)");
+        bullets.push("Constraints: Unlimited boundaries (+1 pt)");
       }
 
       if (lower.includes('bullet') || lower.includes('step') || lower.includes('format') || lower.includes('list') || lower.includes('table')) {
         score += 3;
-        bullets.push("Output Format: Specific structural format requested (+3 pts)");
+        bullets.push("Output Format: Specific layout specified (+3 pts)");
       } else {
         score += 1;
-        bullets.push("Output Format: Unspecified formatting (+1 pt)");
+        bullets.push("Output Format: Open-ended formatting (+1 pt)");
       }
 
       return { score: Math.min(score, 15), bullets };
     }
 
-    function gradeSelfEval(acc, clar, align, eff, rob, origPrompt) {
+    function gradeSelfEval(acc, clar, align, eff, rob) {
       let score = 0;
       let bullets = [];
-      const lowerOrig = origPrompt.toLowerCase();
+      const fields = [acc, clar, align, eff, rob];
 
-      const mitigatedBiasInPrompt = lowerOrig.includes('perspective') || lowerOrig.includes('bias') || lowerOrig.includes('both sides') || lowerOrig.includes('contrast');
-
-      const inputs = [acc, clar, align, eff];
-      inputs.forEach((inp) => {
-        if (inp.length > 25) {
-          score += 2;
-        } else if (inp.length > 10) {
-          score += 1;
-        }
+      fields.forEach((f) => {
+        if (f.length > 20) score += 2;
+        else if (f.length > 8) score += 1;
       });
 
-      if (rob.length > 25 || mitigatedBiasInPrompt) {
-        score += 2;
-        bullets.push("Bias/Robustness: Strong critique (or prompt proactively controlled bias) (+2 pts)");
-      } else {
-        score += 1;
-        bullets.push("Bias/Robustness: Surface-level analysis (+1 pt)");
-      }
-
-      bullets.push(`Completed evaluation across all 5 distinct dimensions (+${Math.min(score, 10)} pts)`);
+      bullets.push(`Evaluated response across all 5 dimensions (+${score} pts)`);
       return { score: Math.min(score, 10), bullets };
     }
 
     function gradeIteration() {
-      let score = 0;
-      let bullets = [];
-
-      if (currentAttempt === 1) {
-        score = 5;
-        bullets.push("Initial Attempt: Baseline attempt completed (+5 pts)");
-      } else {
-        score = 5;
-        bullets.push(`Refinement: Demonstrated prompt iteration across Attempt ${currentAttempt} (+5 pts)`);
-      }
+      let score = 5;
+      let bullets = [`Attempt ${currentAttempt} execution logged (+5 pts)`];
       return { score, bullets };
     }
 
@@ -428,33 +434,42 @@
       currentAttempt++;
       initialPromptText = "";
       document.getElementById('attempt-badge').innerText = `Attempt ${currentAttempt} of ${maxAttempts}`;
-      document.getElementById('topic-suggestions').classList.remove('hidden');
       document.getElementById('scorecard-section').classList.add('hidden');
       document.getElementById('user-input').value = "";
 
-      appendMessage('ai', `<strong>Starting Attempt ${currentAttempt}!</strong> Revise your initial prompt using what you learned from your scorecard.`);
+      appendMessage('ai', `<strong>Attempt ${currentAttempt} Started!</strong> Revise your initial prompt based on your previous evaluation.`);
       document.getElementById('chat-section').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function useTopic(topicName) {
+    function useTopic(type) {
       const inputEl = document.getElementById('user-input');
-      if (topicName === 'Ice Cream Recipe Master') {
-        inputEl.value = "Act as an expert pastry chef. Context: Beginner home cook with basic tools. Task: Create a 1/2 gallon no-churn recipe for Strawberry and Chocolate-Banana-Almond-Cherry. Constraints: Use normal store ingredients under $15. Format: Step-by-step bullet points.";
+      if (type === 'Ice Cream') {
+        inputEl.value = "Act as an expert pastry chef. Context: Beginner home cook with basic kitchen utensils. Task: Create a 1/2 gallon no-churn recipe for Strawberry and Chocolate-Banana-Almond-Cherry. Constraints: Use store ingredients under $15. Format: Step-by-step bullet points.";
+      } else if (type === 'AP Exam') {
+        inputEl.value = "Act as an AP Exam prep tutor. Context: High school senior studying for AP Environmental Science. Task: Create a 5-day study plan. Constraints: Maximum 1 hour per day. Format: Bulleted schedule by day.";
       } else {
-        inputEl.value = `Act as an AI ${topicName}. Context: High school senior preparing for graduation. Task: Create a 3-step action plan. Constraints: Keep under 200 words. Format: Bulleted list.`;
+        inputEl.value = "Act as a financial advisor. Context: Recent high school graduate entering college. Task: Outline a monthly budget plan. Constraints: Income is $800/month part-time job. Format: Category list with percentages.";
       }
     }
 
     function confirmReset() {
-      if (confirm("Reset simulator and start from Attempt 1?")) {
+      if (confirm("Reset simulator and return to Attempt 1?")) {
         location.reload();
       }
     }
 
     function copyTranscript() {
-      const summary = `Apps of AI - Prompt Simulator Scorecard\nAttempt: ${currentAttempt}\nTotal Score: ${document.getElementById('total-score-display').innerText}\nSubmitted successfully.`;
+      const summary = `Apps of AI - Evaluation Scorecard\nAttempt: ${currentAttempt}\nTotal Score: ${document.getElementById('total-score-display').innerText}`;
       navigator.clipboard.writeText(summary);
-      alert("Submission code copied to clipboard!");
+      alert("Summary copied to clipboard!");
+    }
+
+    function formatMarkdown(text) {
+      return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
     }
 
     function escapeHtml(str) {
