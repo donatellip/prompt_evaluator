@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Apps of AI: Live Prompt & Evaluation Simulator</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Free Zero-Setup Live AI Engine -->
-  <script src="https://js.puter.com/v2/"></script>
   <style>
     @media print {
       body { background: white !important; color: black !important; }
@@ -21,8 +19,8 @@
   <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-lg no-print">
     <div class="max-w-5xl mx-auto flex justify-between items-center">
       <div>
-        <h1 class="text-xl font-bold text-indigo-400">Apps of AI: Prompt & Evaluation Lab</h1>
-        <p class="text-xs text-slate-400">12th Grade AI Course | Live LLM Integration & 30-Point Meta-Rubric</p>
+        <h1 class="text-xl font-bold text-indigo-400">Apps of AI: Live Prompt & Evaluation Lab</h1>
+        <p class="text-xs text-slate-400">12th Grade AI Course | Live Interactive AI Model Integration</p>
       </div>
       <div class="flex items-center space-x-3">
         <span id="attempt-badge" class="px-3 py-1 bg-indigo-900/80 text-indigo-300 border border-indigo-700 text-xs font-semibold rounded-full">
@@ -44,45 +42,45 @@
       <div class="bg-slate-800/90 border-b border-slate-700 p-3 px-4 flex justify-between items-center">
         <div class="flex items-center space-x-2">
           <div id="ai-status-dot" class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-          <span id="ai-status-text" class="text-sm font-medium text-slate-200">Live AI Engine Active</span>
+          <span id="ai-status-text" class="text-sm font-medium text-slate-200">Live AI Model Engine Active</span>
         </div>
         <span class="text-xs text-slate-400">Type <code class="bg-slate-700 px-1 py-0.5 rounded text-amber-300 font-mono">COMPLETE</code> to finish attempt</span>
       </div>
 
       <!-- Messages Stream -->
       <div id="message-list" class="flex-1 overflow-y-auto p-4 space-y-4">
-        <!-- Tutor Welcome Message -->
+        <!-- AI Welcome Message -->
         <div class="flex items-start space-x-3">
           <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-xs shrink-0">AI</div>
           <div class="bg-slate-700/80 border border-slate-600/60 p-3.5 rounded-xl rounded-tl-none max-w-[85%] text-sm leading-relaxed text-slate-200">
-            Welcome to the Live Prompt Engineering Lab! Craft a complete prompt using the 5 Core Components (<strong>Role, Context, Task, Constraints, Output Format</strong>).
+            Welcome! I am connected directly to an active AI engine. Submit any prompt below (e.g., an ice cream recipe request, study coach, or budget plan) and I will generate a real response in real-time.
             <br><br>
-            When submitted, a live language model will process your prompt in real-time. When you're finished testing, type <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">COMPLETE</code> to lock in your work and enter Self-Evaluation mode.
+            Once you have tested your prompt, type <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">COMPLETE</code> to evaluate the output against the 30-point meta-rubric.
           </div>
         </div>
       </div>
 
       <!-- Topic Quick-Start Buttons -->
       <div id="topic-suggestions" class="bg-indigo-950/60 border-t border-indigo-800/50 p-2 px-4 text-xs flex items-center gap-2 overflow-x-auto">
-        <span class="text-indigo-300 font-semibold whitespace-nowrap">Topic Templates:</span>
+        <span class="text-indigo-300 font-semibold whitespace-nowrap">Try A Prompt Template:</span>
         <button onclick="useTopic('Ice Cream')" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-md border border-indigo-700/50 whitespace-nowrap transition">
-          🍨 Ice Cream Recipe
+          🍨 Ice Cream Master
         </button>
         <button onclick="useTopic('AP Exam')" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-md border border-indigo-700/50 whitespace-nowrap transition">
-          📚 AP Study Coach
+          📚 AP Study Plan
         </button>
         <button onclick="useTopic('Budget')" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-md border border-indigo-700/50 whitespace-nowrap transition">
-          💵 Budget Planning
+          💵 Post-Grad Budget
         </button>
       </div>
 
       <!-- Input Bar -->
       <div class="p-3 border-t border-slate-700 bg-slate-800/50">
         <form id="chat-form" onsubmit="handleSend(event)" class="flex gap-2">
-          <input type="text" id="user-input" autocomplete="off" placeholder="Type your structured prompt or 'COMPLETE'..." 
+          <input type="text" id="user-input" autocomplete="off" placeholder="Type your prompt here or 'COMPLETE'..." 
             class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
           <button id="send-btn" type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm px-5 py-2.5 rounded-lg transition shadow-md flex items-center gap-2">
-            <span>Send</span>
+            <span>Send Prompt</span>
           </button>
         </form>
       </div>
@@ -93,35 +91,35 @@
       <div class="border-b border-slate-700 pb-3 flex justify-between items-center">
         <div>
           <h2 class="text-lg font-bold text-amber-300">Phase 2: Self-Evaluation Matrix (10 Points)</h2>
-          <p class="text-xs text-slate-400">Critique the live AI's response to your prompt across all 5 dimensions.</p>
+          <p class="text-xs text-slate-400">Critique the live AI output across all 5 dimensions. Provide concrete observations.</p>
         </div>
-        <span class="text-xs font-mono bg-amber-950 text-amber-300 border border-amber-700/50 px-2.5 py-1 rounded">2 pts per area</span>
+        <span class="text-xs font-mono bg-amber-950 text-amber-300 border border-amber-700/50 px-2.5 py-1 rounded">2 pts each</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">1. Accuracy & Factuality</label>
-          <textarea id="eval-acc" rows="2" placeholder="Were measurements, facts, or instructions accurate in the AI response?..." 
+          <textarea id="eval-acc" rows="2" placeholder="Were details, measurements, or steps factually accurate in the response?..." 
             class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"></textarea>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">2. Clarity & Formatting</label>
-          <textarea id="eval-clar" rows="2" placeholder="Did the AI follow your structural requests (bullets, headers, tone)?..." 
+          <textarea id="eval-clar" rows="2" placeholder="Did the AI structure its response appropriately (lists, steps, headers)?..." 
             class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"></textarea>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">3. Goal Alignment</label>
-          <textarea id="eval-align" rows="2" placeholder="Did the output directly fulfill your stated goal and task?..." 
+          <textarea id="eval-align" rows="2" placeholder="Did the output satisfy your primary task and requested parameters?..." 
             class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"></textarea>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">4. Efficiency & Conciseness</label>
-          <textarea id="eval-eff" rows="2" placeholder="Was there excess fluff or unnecessary repetition in the answer?..." 
+          <textarea id="eval-eff" rows="2" placeholder="Was the length appropriate? Was there unnecessary fluff?..." 
             class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"></textarea>
         </div>
         <div class="md:col-span-2">
           <label class="block text-xs font-semibold text-slate-300 mb-1">5. Robustness & Bias Awareness</label>
-          <textarea id="eval-rob" rows="2" placeholder="Did the output exhibit unstated assumptions, bias, or safety issues?..." 
+          <textarea id="eval-rob" rows="2" placeholder="Did the response exhibit any unstated assumptions or missing edge cases?..." 
             class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:border-indigo-500 focus:outline-none"></textarea>
         </div>
       </div>
@@ -139,7 +137,7 @@
       <div class="flex justify-between items-start border-b border-slate-700 pb-4">
         <div>
           <h2 class="text-xl font-bold text-indigo-300">Final Assessment Scorecard</h2>
-          <p class="text-xs text-slate-400">Apps of AI | 30-Point Rubric Breakdown</p>
+          <p class="text-xs text-slate-400">Apps of AI | 30-Point Meta-Rubric Assessment</p>
         </div>
         <div class="text-right">
           <div id="total-score-display" class="text-3xl font-extrabold text-amber-400">0 / 30</div>
@@ -147,7 +145,6 @@
         </div>
       </div>
 
-      <!-- Breakdown Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
           <div class="text-xs text-slate-400">Part 1: Initial Prompt</div>
@@ -166,7 +163,6 @@
         </div>
       </div>
 
-      <!-- Actions -->
       <div class="flex flex-wrap gap-3 pt-2 no-print">
         <button id="retake-btn" onclick="startRetake()" class="hidden bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition">
           🔄 Retake Challenge (Attempt <span id="next-attempt-num">2</span> of 3)
@@ -183,11 +179,10 @@
   </main>
 
   <script>
-    // App State Variables
     let currentAttempt = 1;
     let maxAttempts = 3;
     let initialPromptText = "";
-    let chatConversation = [];
+    let chatHistory = [];
 
     async function handleSend(e) {
       e.preventDefault();
@@ -200,7 +195,7 @@
 
       if (text.toUpperCase() === 'COMPLETE') {
         if (!initialPromptText) {
-          appendMessage('ai', "Please enter an initial prompt to test with the AI before typing COMPLETE.");
+          appendMessage('ai', "Please enter an initial prompt to execute before typing COMPLETE.");
           return;
         }
         openEvalModal();
@@ -211,33 +206,42 @@
         initialPromptText = text;
       }
 
-      chatConversation.push({ role: 'user', content: text });
-
-      // Show typing indicator
+      chatHistory.push({ role: 'user', content: text });
       const loadingId = appendLoadingIndicator();
 
       try {
-        let aiResponse = "";
-        
-        // Execute Live LLM Request via Puter JS SDK if loaded
-        if (window.puter && puter.ai) {
-          const res = await puter.ai.chat(text);
-          aiResponse = typeof res === 'string' ? res : (res.message?.content || res.toString());
-        } else {
-          // Dynamic offline backup generator
-          aiResponse = generateFallbackResponse(text);
-        }
-
+        // Direct zero-auth open AI endpoint
+        const responseText = await queryLiveAIModel(text);
         removeLoadingIndicator(loadingId);
-        appendMessage('ai', formatMarkdown(aiResponse));
-        chatConversation.push({ role: 'assistant', content: aiResponse });
-
+        appendMessage('ai', formatMarkdown(responseText));
+        chatHistory.push({ role: 'assistant', content: responseText });
       } catch (err) {
-        console.warn("Live API encounter:", err);
+        console.error("AI Fetch Error:", err);
         removeLoadingIndicator(loadingId);
-        const fallbackText = generateFallbackResponse(text);
-        appendMessage('ai', formatMarkdown(fallbackText));
+        appendMessage('ai', "<em>Note: Unable to reach live server. Here is a simulated response based on your prompt:</em><br><br>" + formatMarkdown(getBackupResponse(text)));
       }
+    }
+
+    // Direct HTTP call to an unauthenticated open LLM endpoint
+    async function queryLiveAIModel(prompt) {
+      const apiURL = "https://text.pollinations.ai/";
+      const fullPrompt = encodeURIComponent("You are a helpful AI assistant. Answer the user prompt directly and thoroughly.\nUser Prompt: " + prompt);
+      
+      const res = await fetch(`${apiURL}${fullPrompt}`, {
+        method: 'GET',
+        headers: { 'Accept': 'text/plain' }
+      });
+
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      return await res.text();
+    }
+
+    function getBackupResponse(promptText) {
+      const lower = promptText.toLowerCase();
+      if (lower.includes("ice cream") || lower.includes("recipe")) {
+        return "### Homemade Strawberry & Chocolate Ice Cream\n\n**Ingredients:**\n- 2 cups heavy whipping cream\n- 1 can (14 oz) sweetened condensed milk\n- Mix-ins: Strawberries, chocolate chips, sliced almonds, cherries\n\n**Steps:**\n1. Whip heavy cream to stiff peaks.\n2. Gently fold in condensed milk and divide into two bowls.\n3. Blend strawberries into Bowl 1. Add cocoa/chocolate/cherry to Bowl 2.\n4. Freeze for 6 hours.";
+      }
+      return `Custom response to: "${promptText}". The AI executed your parameters cleanly with structured guidance.`;
     }
 
     function appendMessage(sender, text) {
@@ -275,7 +279,7 @@
           <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
           <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
           <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
-          <span class="text-xs ml-2">Generating live response...</span>
+          <span class="text-xs ml-2">Live AI is thinking...</span>
         </div>
       `;
       list.appendChild(wrapper);
@@ -286,26 +290,6 @@
     function removeLoadingIndicator(id) {
       const el = document.getElementById(id);
       if (el) el.remove();
-    }
-
-    // Dynamic backup in case of client network filtering
-    function generateFallbackResponse(text) {
-      const lower = text.toLowerCase();
-      if (lower.includes("ice cream") || lower.includes("strawberry") || lower.includes("chocolate")) {
-        return "### Homemade Ice Cream Recipe\n\n" +
-               "**Ingredients:**\n" +
-               "* 2 cups heavy whipping cream (cold)\n" +
-               "* 1 can (14 oz) sweetened condensed milk\n" +
-               "* 1 tsp pure vanilla extract\n" +
-               "* Mix-ins: Fresh strawberry puree or chocolate chips\n\n" +
-               "**Instructions:**\n" +
-               "1. **Whip:** In a chilled bowl, whip heavy cream until stiff peaks form.\n" +
-               "2. **Fold:** Gently fold in sweetened condensed milk and vanilla until smooth.\n" +
-               "3. **Flavor:** Swirl in your strawberry reduction or chocolate mix-ins.\n" +
-               "4. **Freeze:** Transfer to a freezer-safe dish and freeze for 6 hours.\n\n" +
-               "*Cost: ~$12 total. No ice cream maker required!*";
-      }
-      return `Here is a custom response tailored to your request:\n\n1. **Overview:** Executing parameters for your task.\n2. **Details:** Addressing your prompt criteria with structured guidelines.\n\n*Type COMPLETE when ready to evaluate!*`;
     }
 
     function openEvalModal() {
@@ -364,7 +348,7 @@
 
       if (lower.includes('act as') || lower.includes('you are') || lower.includes('role') || lower.includes('expert')) {
         score += 3;
-        bullets.push("Role: Clear persona defined (+3 pts)");
+        bullets.push("Role: Defined explicit persona (+3 pts)");
       } else {
         score += 1;
         bullets.push("Role: Implicit persona (+1 pt)");
@@ -372,34 +356,34 @@
 
       if (prompt.length > 35) {
         score += 3;
-        bullets.push("Context: Background details provided (+3 pts)");
+        bullets.push("Context: Detailed scenario background (+3 pts)");
       } else {
         score += 1;
-        bullets.push("Context: Minimal background (+1 pt)");
+        bullets.push("Context: Brief background (+1 pt)");
       }
 
       if (lower.includes('create') || lower.includes('make') || lower.includes('recipe') || lower.includes('explain') || lower.includes('build')) {
         score += 3;
-        bullets.push("Task: Explicit primary objective (+3 pts)");
+        bullets.push("Task: Clear action statement (+3 pts)");
       } else {
         score += 2;
-        bullets.push("Task: Broad primary objective (+2 pts)");
+        bullets.push("Task: Broad action statement (+2 pts)");
       }
 
       if (lower.includes('no') || lower.includes('don\'t') || lower.includes('under') || lower.includes('limit') || lower.includes('only')) {
         score += 3;
-        bullets.push("Constraints: Clear boundaries set (+3 pts)");
+        bullets.push("Constraints: Explicit parameters defined (+3 pts)");
       } else {
         score += 1;
-        bullets.push("Constraints: Unlimited boundaries (+1 pt)");
+        bullets.push("Constraints: Few/no boundaries set (+1 pt)");
       }
 
       if (lower.includes('bullet') || lower.includes('step') || lower.includes('format') || lower.includes('list') || lower.includes('table')) {
         score += 3;
-        bullets.push("Output Format: Specific layout specified (+3 pts)");
+        bullets.push("Output Format: Specific layout requested (+3 pts)");
       } else {
         score += 1;
-        bullets.push("Output Format: Open-ended formatting (+1 pt)");
+        bullets.push("Output Format: Open formatting (+1 pt)");
       }
 
       return { score: Math.min(score, 15), bullets };
@@ -420,14 +404,11 @@
     }
 
     function gradeIteration() {
-      let score = 5;
-      let bullets = [`Attempt ${currentAttempt} execution logged (+5 pts)`];
-      return { score, bullets };
+      return { score: 5, bullets: [`Attempt ${currentAttempt} execution logged (+5 pts)`] };
     }
 
     function renderList(elemId, items) {
-      const el = document.getElementById(elemId);
-      el.innerHTML = items.map(i => `<li>${i}</li>`).join('');
+      document.getElementById(elemId).innerHTML = items.map(i => `<li>${i}</li>`).join('');
     }
 
     function startRetake() {
@@ -437,18 +418,18 @@
       document.getElementById('scorecard-section').classList.add('hidden');
       document.getElementById('user-input').value = "";
 
-      appendMessage('ai', `<strong>Attempt ${currentAttempt} Started!</strong> Revise your initial prompt based on your previous evaluation.`);
+      appendMessage('ai', `<strong>Attempt ${currentAttempt} Started!</strong> Revise your initial prompt using your previous evaluation insights.`);
       document.getElementById('chat-section').scrollIntoView({ behavior: 'smooth' });
     }
 
     function useTopic(type) {
       const inputEl = document.getElementById('user-input');
       if (type === 'Ice Cream') {
-        inputEl.value = "Act as an expert pastry chef. Context: Beginner home cook with basic kitchen utensils. Task: Create a 1/2 gallon no-churn recipe for Strawberry and Chocolate-Banana-Almond-Cherry. Constraints: Use store ingredients under $15. Format: Step-by-step bullet points.";
+        inputEl.value = "Act as an expert pastry chef. Context: Beginner home cook with basic tools. Task: Create a 1/2 gallon no-churn recipe for Strawberry and Chocolate-Banana-Almond-Cherry. Constraints: Ingredients under $15 total. Format: Step-by-step bullet points.";
       } else if (type === 'AP Exam') {
-        inputEl.value = "Act as an AP Exam prep tutor. Context: High school senior studying for AP Environmental Science. Task: Create a 5-day study plan. Constraints: Maximum 1 hour per day. Format: Bulleted schedule by day.";
+        inputEl.value = "Act as an AP prep tutor. Context: High school senior taking AP Biology. Task: Create a 5-day review plan. Constraints: 45 mins per day max. Format: Bulleted daily schedule.";
       } else {
-        inputEl.value = "Act as a financial advisor. Context: Recent high school graduate entering college. Task: Outline a monthly budget plan. Constraints: Income is $800/month part-time job. Format: Category list with percentages.";
+        inputEl.value = "Act as a financial advisor. Context: Graduating senior starting college. Task: Create a monthly budget framework. Constraints: Part-time income $900/mo. Format: Table breakdown by percentage.";
       }
     }
 
